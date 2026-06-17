@@ -1,7 +1,7 @@
 
-  # FreshIntern Job Search Dashboard
+  # FreshIntern Job Search
 
-  ## Running the code
+  ## Running the front-end code
 
   Run `npm i` to install the dependencies.
 
