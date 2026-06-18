@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from typing import Literal
 from argparse import Namespace
-import cli
 from core import get_jobs
 app = FastAPI()
 
@@ -12,15 +11,12 @@ def get_jobs_api(
     term: str | None = None,
     source: Literal["internships", "newgrad"] = "internships",
     year: int | None = None,
-    source_url: int | None = None,
-    province: int | None = None,
-    include_ai=False,
-    all_tech=False,
-    rescue_adjacent=False,
-    roles: int | None = None,
-    csv: int | None = None,
-    xlsx: int | None = None,
-    json: int | None = None,
+    source_url: str | None = None,
+    province: str | None = None,
+    include_ai : bool = False,
+    all_tech : bool = False,
+    rescue_adjacent : bool = False,
+    roles: str | None = None,
 ):  
     search_parameters = Namespace(
         hours=hours,
@@ -33,9 +29,6 @@ def get_jobs_api(
         all_tech=all_tech,
         rescue_adjacent=rescue_adjacent,
         roles=roles,
-        csv=csv,
-        xlsx=xlsx,
-        json=json,
     )
 
     jobs = get_jobs(search_parameters)
