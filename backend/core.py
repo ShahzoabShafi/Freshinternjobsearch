@@ -1,4 +1,5 @@
-import cli.py
+import time
+from cli import select_categories, resolve_source_url,is_in_canada, is_internship, is_swe_adjacent, fetch_listings
 
 
 def find_jobs(listings, args, now=None):
@@ -57,5 +58,5 @@ def get_jobs(search_parameters):
         return 1
 
     now = time.time()
-    jobs = core.find_jobs(listings,search_parameters)
+    jobs = find_jobs(listings,search_parameters)
     return jobs

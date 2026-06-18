@@ -428,7 +428,7 @@ def main(argv=None):
         return 1
 
     now = time.time()
-    jobs = find_jobs(listings, args, now=now)
+    jobs = find_jobs_cli_version(listings, args, now=now)
     print_jobs(jobs, args, now)
 
     if args.csv and jobs:

@@ -1,9 +1,8 @@
 from fastapi import FastAPI
 from typing import Literal
 from argparse import Namespace
-import cli.py
-import core.py
-
+import cli
+from core import get_jobs
 app = FastAPI()
 
 
