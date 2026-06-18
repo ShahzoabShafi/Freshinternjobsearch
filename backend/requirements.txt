@@ -1,3 +1,4 @@
+# pip freeze writes the exact versions into requirements.txt so anyone (including future you on another machine) can recreate the environment with pip install -r requirements.txt
 annotated-doc==0.0.4
 annotated-types==0.7.0
 anyio==4.14.0

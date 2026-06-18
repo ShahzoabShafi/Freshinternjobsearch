@@ -198,7 +198,7 @@ def is_swe_adjacent(title):
     return any(k in t for k in SWE_ADJACENT_KEYWORDS)
 
 
-def find_jobs(listings, args, now=None):
+def find_jobs_cli_version(listings, args, now=None):
     now = now or time.time()
     cats = select_categories(args)
     roles = None
