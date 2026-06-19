@@ -1,4 +1,4 @@
-import time, sys, urllib.request, json, urllib.error
+import time, sys, urllib.request, json, urllib.error, csv
 from datetime import datetime, timezone
 
 # Raw listings path within any SimplifyJobs repo
@@ -205,3 +205,115 @@ def _listings_exists(repo, timeout=15):
         return None  # other HTTP error -> uncertain
     except Exception:
         return None  # network/uncertain -> caller decides
+
+
+# export functions
+
+def export_csv(jobs, path, now):
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(
+            ["title", "company", "category", "locations",
+             "posted_utc", "hours_ago", "sponsorship", "url"]
+        )
+        for j in jobs:
+            w.writerow([
+                j.get("title", ""),
+                j.get("company_name", ""),
+                j.get("category", ""),
+                "; ".join(j.get("locations") or []),
+                datetime.fromtimestamp(
+                    j.get("date_posted", 0), timezone.utc
+                ).strftime("%Y-%m-%d %H:%M"),
+                f"{hours_since(j.get('date_posted',0), now):.1f}",
+                j.get("sponsorship", ""),
+                j.get("url", ""),
+            ])
+    print(f"\nSaved {len(jobs)} role(s) to {path}")
+
+
+def export_xlsx(jobs, path, now):
+    """Write results to a formatted .xlsx workbook.
+
+    Columns: Job Title | Company | Location | Category | Date Posted |
+             Deadline to Apply | Description & Application Link
+
+    Note: the upstream feed does NOT publish application deadlines, so that
+    column is flagged for manual checking rather than left misleadingly blank.
+    """
+    try:
+        from openpyxl import Workbook
+        from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+        from openpyxl.comments import Comment
+        from openpyxl.utils import get_column_letter
+    except ImportError:
+        print("openpyxl is required for Excel export. Install it with:\n"
+              "    pip install openpyxl", file=sys.stderr)
+        return
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "SWE Interns Canada"
+
+    headers = ["Job Title", "Company", "Location", "Category",
+               "Date Posted", "Deadline to Apply",
+               "Description & Application Link"]
+    ws.append(headers)
+
+    header_fill = PatternFill("solid", start_color="1F4E78")
+    header_font = Font(name="Arial", bold=True, color="FFFFFF", size=11)
+    thin = Side(style="thin", color="D9D9D9")
+    border = Border(left=thin, right=thin, top=thin, bottom=thin)
+
+    for col, _ in enumerate(headers, start=1):
+        c = ws.cell(row=1, column=col)
+        c.fill = header_fill
+        c.font = header_font
+        c.alignment = Alignment(horizontal="center", vertical="center")
+        c.border = border
+    ws.cell(row=1, column=6).comment = Comment(
+        "The internship feed does not publish deadlines. Open the posting "
+        "link to confirm the closing date — many internships are rolling / "
+        "'until filled'.", "intern-finder")
+
+    body_font = Font(name="Arial", size=10)
+    link_font = Font(name="Arial", size=10, color="0563C1", underline="single")
+    deadline_fill = PatternFill("solid", start_color="FFF2CC")
+
+    for j in jobs:
+        posted = datetime.fromtimestamp(
+            j.get("date_posted", 0), timezone.utc).date()
+        url = j.get("url", "")
+        ws.append([
+            j.get("title", ""),
+            j.get("company_name", ""),
+            ", ".join(j.get("locations") or []),
+            j.get("category", ""),
+            posted,
+            "Not listed — check posting",
+            url,
+        ])
+        r = ws.max_row
+        for col in range(1, 8):
+            cell = ws.cell(row=r, column=col)
+            cell.font = body_font
+            cell.border = border
+            cell.alignment = Alignment(vertical="top", wrap_text=(col in (1, 3)))
+        ws.cell(row=r, column=5).number_format = "yyyy-mm-dd"
+        ws.cell(row=r, column=6).fill = deadline_fill
+        link_cell = ws.cell(row=r, column=7)
+        if url:
+            link_cell.hyperlink = url
+            link_cell.font = link_font
+
+    widths = [40, 22, 30, 18, 13, 24, 55]
+    for i, w in enumerate(widths, start=1):
+        ws.column_dimensions[get_column_letter(i)].width = w
+    ws.freeze_panes = "A2"
+    ws.auto_filter.ref = f"A1:{get_column_letter(len(headers))}{ws.max_row}"
+
+    wb.save(path)
+    print(f"\nSaved {len(jobs)} role(s) to {path}")
+
+def hours_since(epoch, now):
+    return (now - epoch) / 3600.0

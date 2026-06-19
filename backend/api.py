@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from typing import Literal
 from argparse import Namespace
 from core import get_jobs
-app = FastAPI()
 
+app = FastAPI()
 
 @app.get("/api/jobs")
 def get_jobs_api(
