@@ -1,9 +1,16 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from typing import Literal
 from argparse import Namespace
 from core import get_jobs
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],   # Vite's dev server
+    allow_methods=["GET"],
+    allow_headers=["*"],
+) # this unblocks the calls from the frontend to the backend
 
 @app.get("/api/jobs")
 def get_jobs_api(

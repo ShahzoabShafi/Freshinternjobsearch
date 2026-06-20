@@ -39,29 +39,34 @@ SWE_ADJACENT_KEYWORDS = (
 # When rescuing, skip these to avoid pulling in hardware/firmware roles.
 HARDWARE_EXCLUDE = ("embedded", "firmware", "fpga", "circuit", "pcb", "rtl", "asic")
 
+# caches
+_cache = {}              # url -> (fetched_at, listings)
+CACHE_TTL = 300          # matches GitHub's own cache header (5 minutes)
+_url_cache = {}          # (source, year, source_url) -> (resolved_at, url)
+URL_TTL = 3600           # the active repo barely changes (1 hour)
+
 
 def get_jobs(search_parameters):
-    url = resolve_source_url(search_parameters)
+    url = get_source_url(search_parameters)
     try:
-        listings = fetch_listings(url)
+        listings = get_listings(url)
     except Exception as e:
         raise Exception(f"could not download the feed: {e}")
-        # print(f"ERROR: could not download the feed: {e}", file=sys.stderr)
-        # return 1
 
-    now = time.time()
     jobs = find_jobs(listings,search_parameters)
     return jobs
 
-def find_jobs(listings, search_parameters, now=None):
-    now = now or time.time()
+def find_jobs(listings, search_parameters):
+    now = time.time()
     categories = select_categories(search_parameters)
     roles = None
+
     if search_parameters.roles:
         roles = [r.strip().lower() for r in search_parameters.roles.split(",") if r.strip()]
     term = search_parameters.term.strip().lower() if search_parameters.term else None
     window = search_parameters.hours * 3600
-    out = []
+    jobs_output = []
+
     for job in listings:
         if not job.get("active", False):
             continue
@@ -88,17 +93,22 @@ def find_jobs(listings, search_parameters, now=None):
 
         if search_parameters.source != "newgrad" and not is_internship(title):
             continue
+
         # Optional narrowing to specific role keywords (e.g. --roles devops,backend)
         if roles and not any(r in title.lower() for r in roles):
             continue
+
         if not is_in_canada(job.get("locations"), search_parameters.province):
             continue
+
         posted = job.get("date_posted", 0)
         if (now - posted) > window:
             continue
-        out.append(job)
-    out.sort(key=lambda j: j.get("date_posted", 0), reverse=True)
-    return out
+        jobs_output.append(job)
+
+    jobs_output.sort(key=lambda j: j.get("date_posted", 0), reverse=True)
+
+    return jobs_output
 
 def select_categories(search_parameters):
     cats = set(SOFTWARE_CATEGORIES)
@@ -139,12 +149,32 @@ def is_swe_adjacent(title):
     return any(k in t for k in SWE_ADJACENT_KEYWORDS)
 
 
+def get_listings(url):
+    now = time.monotonic() #  monotonic clock is a clock that always moves forward and is unaffected by system clock changes
+    hit = _cache.get(url)
+    if hit and now - hit[0] < CACHE_TTL:
+        # print("CACHE HIT - reusing")   
+        return hit[1]                 # fresh -> reuse, no network
+    # print("CACHE MISS - fetching from network")
+    listings = fetch_listings(url)    # stale or missing -> fetch
+    _cache[url] = (now, listings)     
+    return listings
+
 def fetch_listings(url):
     """Download and parse a listings feed from a given URL."""
     req = urllib.request.Request(url, headers={"User-Agent": "intern-finder/1.0"})
     with urllib.request.urlopen(req, timeout=60) as resp:
         return json.loads(resp.read().decode("utf-8"))
 
+def get_source_url(search_parameters):
+    key = (search_parameters.source, search_parameters.year, search_parameters.source_url)
+    now = time.monotonic()
+    hit = _url_cache.get(key)
+    if hit and now - hit[0] < URL_TTL:
+        return hit[1]
+    url = resolve_source_url(search_parameters)
+    _url_cache[key] = (now, url)
+    return url
 
 def resolve_source_url(search_parameters, verbose=True):
     """Decide which listings.json URL to pull from, based on search_parameters."""
