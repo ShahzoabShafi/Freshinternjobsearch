@@ -27,6 +27,7 @@ type SortBy = "newest" | "company";
 type Category = "Software" | "AI/ML/Data" | "All tech";
 type View = "browse" | "saved";
 
+
 interface Job {
   id: string;
   title: string;
