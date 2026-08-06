@@ -75,7 +75,7 @@ export default function FilterPanelContent({
       {/* Role type */}
       <FilterSection title="Role type">
         <div className="flex rounded-lg overflow-hidden border border-border bg-muted p-0.5 gap-0.5">
-          {(["internship", "newgrad"] as RoleType[]).map((rt) => (
+          {(["internships", "newgrad"] as RoleType[]).map((rt) => (
             <button
               key={rt}
               onClick={() => onChange({ ...draft, roleType: rt })}
@@ -85,7 +85,7 @@ export default function FilterPanelContent({
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              {rt === "internship" ? "Internships" : "New grad"}
+              {rt === "internships" ? "Internships" : "New grad"}
             </button>
           ))}
         </div>
@@ -144,8 +144,8 @@ export default function FilterPanelContent({
       <FilterSection title="Include related roles">
         <div className="flex items-center gap-3">
           {/* <Toggle
-            checked={draft.includeRelated}
-            onChange={(v) => onChange({ ...draft, includeRelated: v })}
+            checked={draft.includeRelatedRoles}
+            onChange={(v) => onChange({ ...draft, includeRelatedRoles: v })}
             label="Include related roles"
           /> */}
           <span className="text-xs text-muted-foreground leading-snug">

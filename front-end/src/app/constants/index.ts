@@ -24,15 +24,15 @@ const POSTED_OPTS: { label: string; value: PostedWithin }[] = [
 
 const SEASONS: Season[] = ["All", "Fall", "Winter", "Spring", "Summer"];
 const PROVINCES = ["All","ON","QC","BC","AB","MB","SK","NS","NB","NL","PE","NT","YT","NU"];
-const CATEGORIES: Category[] = ["Software", "AI/ML/Data", "All tech"];
+const CATEGORIES: Category[] = [ "All tech","AI/ML/Data"];
 
 const DEFAULT_FILTERS: Filters = {
   postedWithin: "24h",
   season: "All",
-  roleType: "internship",
+  roleType: "internships",
   province: "All",
-  categories: ["Software"],
-  includeRelated: false,
+  categories: [],
+  includeRelatedRoles: false,
   keywords: [],
 };
 

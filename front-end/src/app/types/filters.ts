@@ -1,5 +1,5 @@
-export type RoleType = "internship" | "newgrad";
-export type Category = "Software" | "AI/ML/Data" | "All tech";
+export type RoleType = "internships" | "newgrad";
+export type Category = "AI/ML/Data" | "All tech";
 export type Season = "All" | "Fall" | "Winter" | "Spring" | "Summer";
 export type SortBy = "newest" | "company";
 export type View = "browse" | "saved";
@@ -11,6 +11,6 @@ export interface Filters {
   roleType: RoleType;
   province: string;
   categories: Category[];
-  includeRelated: boolean;
+  includeRelatedRoles: boolean;
   keywords: string[];
 }

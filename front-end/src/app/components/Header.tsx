@@ -135,7 +135,7 @@ export default function Header() {
           </span>
 
           {/* Nav tabs — desktop */}
-          <div className="hidden sm:flex items-center gap-0.5 bg-muted rounded-lg p-0.5">
+          {false && <div className="hidden sm:flex items-center gap-0.5 bg-muted rounded-lg p-0.5">
             <button
               onClick={() => setActiveView("browse")}
               className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
@@ -161,7 +161,7 @@ export default function Header() {
                 </span>
               )}
             </button>
-          </div>
+          </div>}
         </div>
 
         {/* Right zone: Export cluster + Refresh */}
