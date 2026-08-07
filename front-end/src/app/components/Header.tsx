@@ -12,7 +12,15 @@ import { SortBy, View, Filters } from "../types/filters";
 import {DEFAULT_FILTERS } from "../constants/index.ts";
 import { formatRelativeTime } from "./JobCard.tsx";
 
-export default function Header({ jobs }: { jobs: JobListing[] }) {
+export default function Header({
+  jobs,
+  isApiLoading,
+  onRefresh,
+}:{
+  jobs: JobListing[];
+  isApiLoading: boolean;
+  onRefresh: () => void;
+}) {
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(false);
   const [showError, setShowError] = useState(false);
@@ -21,11 +29,6 @@ export default function Header({ jobs }: { jobs: JobListing[] }) {
   const [sortBy, setSortBy] = useState<SortBy>("newest");
   const [appliedFilters, setAppliedFilters] =
     useState<Filters>(DEFAULT_FILTERS);
-
-  const handleRefresh = () => {
-    setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 1200);
-  };
 
   const handleExportCSV = () => {
     const rows = [
@@ -169,13 +172,13 @@ export default function Header({ jobs }: { jobs: JobListing[] }) {
           </button>
           {/* Refresh */}
           <button
-            onClick={handleRefresh}
-            disabled={isLoading}
+            onClick={onRefresh}
+            disabled={isApiLoading}
             className="w-8 h-8 rounded-lg border border-border bg-card flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-border/70 transition-colors disabled:opacity-40"
             aria-label="Refresh listings"
           >
             <RefreshCw
-              className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`}
+              className={`w-3.5 h-3.5 ${isApiLoading ? "animate-spin" : ""}`}
             />
           </button>
           {/* Mobile: Filters button */}

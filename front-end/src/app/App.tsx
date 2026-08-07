@@ -53,8 +53,8 @@ function App() {
   };
 
   const handleOnChange = (next: Filters) => {
-    setAppliedFilters(next);
-    console.log("Filters changed:", appliedFilters);
+    setDraftFilters(next);
+    // console.log("Filters changed:", draftFilters);
   }
 
   const calculateFilterHours = (postedWithin: string): number => {
@@ -77,7 +77,7 @@ function App() {
   const fetchData = async (filters: Filters) => {
     try {
       setIsLoading(true);
-      console.log("Fetching data with filters:", filters);
+      // console.log("Fetching data with filters:", filters);
       const payload = {
         hours: calculateFilterHours(filters.postedWithin),
         term: filters.season.toLowerCase() != "all" ? filters.season : null,
@@ -93,7 +93,7 @@ function App() {
           filters.keywords.length > 0 ? String(filters.keywords.join(",")) : "",
       };
       const response = await fetchInternships(payload);
-      console.log("API Response:", response.data);
+      // console.log("API Response:", response.data);
       setJobs(response.data);
     } catch (err: any) {
       const errorMessage = err.response?.data?.detail || err.message;
@@ -114,6 +114,12 @@ function App() {
     removeKeyword,
   };
 
+  const headerProps = {
+    jobs : jobs,
+    isApiLoading : isLoading,
+    onRefresh: () => fetchData(appliedFilters),
+  }
+
   return (
     <>
       <div
@@ -121,7 +127,7 @@ function App() {
         style={{ fontFamily: "Inter, sans-serif" }}
       >
         {/* Header */}
-        <Header jobs={jobs}></Header>
+        <Header {...headerProps}></Header>
 
         {/* Body */}
         <div className="flex flex-1 overflow-hidden">
