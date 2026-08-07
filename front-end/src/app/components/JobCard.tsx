@@ -2,7 +2,7 @@ import React from "react";
 import { Bookmark, MapPin, ExternalLink, Clock } from "lucide-react";
 import { JobListing } from "../types/job";
 
-const formatRelativeTime = (timestamp: number): string => {
+export const formatRelativeTime = (timestamp: number): string => {
   const now = Math.floor(Date.now() / 1000);
   const diffInSeconds = Math.max(0, now - timestamp);
 
@@ -37,8 +37,8 @@ export default function JobCard({ job }: { job: JobListing }) {
           )}
         </div>
 
-        <p className="text-base text-slate-500 font-medium mt-1">
-          {job.company_name}
+        <p className="text-base text-slate-500 font-medium mt-1 hover:text-[#2b8da8]">
+          <a href={job.company_url} target="_blank" rel="noopener noreferrer" >{job.company_name}</a>
         </p>
 
         {/* Location */}

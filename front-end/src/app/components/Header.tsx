@@ -6,40 +6,21 @@ import {
   FileSpreadsheet,
   Download,
 } from "lucide-react";
-import { Job } from "../types/job"; 
+import { JobListing } from "../types/job";
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { SortBy, View, Filters } from "../types/filters";
-import { ALL_JOBS, DEFAULT_FILTERS } from "../constants/index.ts";
+import {DEFAULT_FILTERS } from "../constants/index.ts";
+import { formatRelativeTime } from "./JobCard.tsx";
 
-export default function Header() {
+export default function Header({ jobs }: { jobs: JobListing[] }) {
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [showError, setShowError] = useState(false);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [activeView, setActiveView] = useState<View>("browse");
   const [sortBy, setSortBy] = useState<SortBy>("newest");
   const [appliedFilters, setAppliedFilters] =
     useState<Filters>(DEFAULT_FILTERS);
-
-  const browsedJobs = useMemo(
-    // () => filterJobs(ALL_JOBS, appliedFilters),
-    () => ALL_JOBS.filter((j: Job) => savedIds.has(j.id)), // to be changed
-    [appliedFilters]
-  );
-  const savedJobs = useMemo(
-    () => ALL_JOBS.filter((j: Job) => savedIds.has(j.id)),
-    // () => DEFAULT_FILTERS, // to be changed
-    [savedIds]
-  );
-
-  const displayJobs = useMemo(() => {
-    const base : Job[] = activeView === "saved" ? savedJobs : browsedJobs;
-    return [...base].sort((a, b) =>
-      sortBy === "newest"
-        ? b.postedAt.getTime() - a.postedAt.getTime()
-        : a.company.localeCompare(b.company)
-    );
-  }, [activeView, browsedJobs, savedJobs, sortBy]);
 
   const handleRefresh = () => {
     setIsLoading(true);
@@ -56,17 +37,17 @@ export default function Header() {
         "Posted",
         "Deadline",
         "Season",
-        "Role Type",
+        "Url",
       ],
-      ...displayJobs.map((j) => [
+      ...jobs.map((j: JobListing) => [
         j.title,
-        j.company,
-        j.location,
+        j.company_name,
+        j.locations.join("; "),
         j.category,
-        j.postedAt.toISOString(),
-        j.deadline?.toLocaleDateString("en-CA") ?? "N/A",
-        j.season,
-        j.roleType,
+        formatRelativeTime(j.date_posted),
+        "N/A",
+        j.terms.join("; "),
+        j.url,
       ]),
     ];
     const csv = rows.map((r) => r.map((c) => `"${c}"`).join(",")).join("\n");
@@ -89,17 +70,17 @@ export default function Header() {
         "Posted",
         "Deadline",
         "Season",
-        "Role Type",
+        "Url",
       ],
-      ...displayJobs.map((j) => [
+      ...jobs.map((j: JobListing) => [
         j.title,
-        j.company,
-        j.location,
+        j.company_name,
+        j.locations.join("; "),
         j.category,
-        j.postedAt.toISOString(),
-        j.deadline?.toLocaleDateString("en-CA") ?? "N/A",
-        j.season,
-        j.roleType,
+        formatRelativeTime(j.date_posted),
+        "N/A",
+        j.terms.join("; "),
+        j.url,
       ]),
     ];
     const tsv = rows.map((r) => r.join("\t")).join("\n");
@@ -135,33 +116,35 @@ export default function Header() {
           </span>
 
           {/* Nav tabs — desktop */}
-          {false && <div className="hidden sm:flex items-center gap-0.5 bg-muted rounded-lg p-0.5">
-            <button
-              onClick={() => setActiveView("browse")}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
-                activeView === "browse"
-                  ? "bg-card text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Browse jobs
-            </button>
-            <button
-              onClick={() => setActiveView("saved")}
-              className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1.5 ${
-                activeView === "saved"
-                  ? "bg-card text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Saved
-              {savedIds.size > 0 && (
-                <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
-                  {savedIds.size}
-                </span>
-              )}
-            </button>
-          </div>}
+          {false && (
+            <div className="hidden sm:flex items-center gap-0.5 bg-muted rounded-lg p-0.5">
+              <button
+                onClick={() => setActiveView("browse")}
+                className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors ${
+                  activeView === "browse"
+                    ? "bg-card text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Browse jobs
+              </button>
+              <button
+                onClick={() => setActiveView("saved")}
+                className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1.5 ${
+                  activeView === "saved"
+                    ? "bg-card text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Saved
+                {savedIds.size > 0 && (
+                  <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
+                    {savedIds.size}
+                  </span>
+                )}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Right zone: Export cluster + Refresh */}
@@ -169,7 +152,7 @@ export default function Header() {
           {/* Export CSV */}
           <button
             onClick={handleExportCSV}
-            disabled={isLoading || displayJobs.length === 0}
+            disabled={isLoading || jobs.length === 0}
             className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border bg-card text-xs font-medium text-muted-foreground hover:text-foreground hover:border-border/70 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <Download className="w-3.5 h-3.5" />
@@ -178,7 +161,7 @@ export default function Header() {
           {/* Export Excel */}
           <button
             onClick={handleExportExcel}
-            disabled={isLoading || displayJobs.length === 0}
+            disabled={isLoading || jobs.length === 0}
             className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border bg-card text-xs font-medium text-muted-foreground hover:text-foreground hover:border-border/70 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <FileSpreadsheet className="w-3.5 h-3.5" />

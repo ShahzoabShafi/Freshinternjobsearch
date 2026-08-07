@@ -16,7 +16,7 @@ function App() {
   const [error, setError] = useState(false);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [activeView, setActiveView] = useState<View>("browse");
-  const [keywordInput, setKeywordInput] = useState("");
+  const [keywordInput, setKeywordInput] = useState(""); 
   const [jobs, setJobs] = useState<JobListing[]>([]);
   // const [sortBy, setSortBy] = useState<SortBy>("newest");
 
@@ -27,12 +27,14 @@ function App() {
   const handleApply = () => {
     setAppliedFilters(draftFilters);
     setFilterDrawerOpen(false);
+    fetchData(appliedFilters);
   };
 
   const handleReset = () => {
     setDraftFilters(DEFAULT_FILTERS);
     setAppliedFilters(DEFAULT_FILTERS);
     setFilterDrawerOpen(false);
+    fetchData(DEFAULT_FILTERS);
   };
 
   const addKeyword = (kw: string) => {
@@ -51,8 +53,25 @@ function App() {
   };
 
   const handleOnChange = (next: Filters) => {
-    setDraftFilters(next);
-    fetchData(draftFilters);
+    setAppliedFilters(next);
+    console.log("Filters changed:", appliedFilters);
+  }
+
+  const calculateFilterHours = (postedWithin: string): number => {
+    switch (postedWithin) {
+      case "24h":
+        return 24;
+      case "48h":
+        return 48;
+      case "3d":
+        return 72;
+      case "7d":
+        return 168;
+      case "30d":
+        return 720;
+      default:
+        return 0; // Default to 0 if no match
+    }    
   }
 
   const fetchData = async (filters: Filters) => {
@@ -60,9 +79,7 @@ function App() {
       setIsLoading(true);
       console.log("Fetching data with filters:", filters);
       const payload = {
-        hours: filters.postedWithin
-          ? parseFloat(filters.postedWithin.slice(0, -1))
-          : null,
+        hours: calculateFilterHours(filters.postedWithin),
         term: filters.season.toLowerCase() != "all" ? filters.season : null,
         source: filters.roleType || null,
         year: null,
@@ -87,7 +104,7 @@ function App() {
   };
 
   const filterProps = {
-    draft: draftFilters,
+    filters: draftFilters,
     onChange: handleOnChange,
     onApply: handleApply,
     onReset: handleReset,
@@ -104,7 +121,7 @@ function App() {
         style={{ fontFamily: "Inter, sans-serif" }}
       >
         {/* Header */}
-        <Header></Header>
+        <Header jobs={jobs}></Header>
 
         {/* Body */}
         <div className="flex flex-1 overflow-hidden">

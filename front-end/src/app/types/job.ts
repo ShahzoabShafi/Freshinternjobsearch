@@ -2,6 +2,7 @@ export interface JobListing {
   active: boolean;
   category: string;
   company_name: string;
+  company_url: string;
   date_posted: number;
   date_updated: number;
   degrees: string[];

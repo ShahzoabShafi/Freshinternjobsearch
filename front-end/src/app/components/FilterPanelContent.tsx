@@ -5,7 +5,7 @@ import { RoleType, Category, Filters } from "../types/filters.ts";
 import { POSTED_OPTS, SEASONS, PROVINCES, CATEGORIES} from "../constants/index.ts";
 
 export default function FilterPanelContent({
-  draft,
+  filters,
   onChange,
   onApply,
   onReset,
@@ -14,7 +14,7 @@ export default function FilterPanelContent({
   addKeyword,
   removeKeyword,
 }: {
-  draft: Filters;
+  filters: Filters;
   onChange: (next: Filters) => void;
   onApply: () => void;
   onReset: () => void;
@@ -26,10 +26,10 @@ export default function FilterPanelContent({
   const kwRef = useRef<HTMLInputElement>(null);
 
   const toggleCategory = (cat: Category) => {
-    const cats = draft.categories.includes(cat)
-      ? draft.categories.filter((c) => c !== cat)
-      : [...draft.categories, cat];
-    onChange({ ...draft, categories: cats });
+    const cats = filters.categories.includes(cat)
+      ? filters.categories.filter((c) => c !== cat)
+      : [...filters.categories, cat];
+    onChange({ ...filters, categories: cats });
   };
 
   return (
@@ -40,9 +40,9 @@ export default function FilterPanelContent({
           {POSTED_OPTS.map((opt) => (
             <button
               key={opt.value}
-              onClick={() => onChange({ ...draft, postedWithin: opt.value })}
+              onClick={() => onChange({ ...filters, postedWithin: opt.value })}
               className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
-                draft.postedWithin === opt.value
+                filters.postedWithin === opt.value
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
               }`}
@@ -59,9 +59,9 @@ export default function FilterPanelContent({
           {SEASONS.map((s) => (
             <button
               key={s}
-              onClick={() => onChange({ ...draft, season: s })}
+              onClick={() => onChange({ ...filters, season: s })}
               className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
-                draft.season === s
+                filters.season === s
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
               }`}
@@ -78,9 +78,9 @@ export default function FilterPanelContent({
           {(["internships", "newgrad"] as RoleType[]).map((rt) => (
             <button
               key={rt}
-              onClick={() => onChange({ ...draft, roleType: rt })}
+              onClick={() => onChange({ ...filters, roleType: rt })}
               className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                draft.roleType === rt
+                filters.roleType === rt
                   ? "bg-card text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               }`}
@@ -95,8 +95,8 @@ export default function FilterPanelContent({
       <FilterSection title="Province">
         <div className="relative">
           <select
-            value={draft.province}
-            onChange={(e) => onChange({ ...draft, province: e.target.value })}
+            value={filters.province}
+            onChange={(e) => onChange({ ...filters, province: e.target.value })}
             className="w-full appearance-none bg-muted border border-border rounded-lg px-3 py-2 text-sm text-foreground pr-8 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow cursor-pointer"
           >
             {PROVINCES.map((p) => (
@@ -120,12 +120,12 @@ export default function FilterPanelContent({
               <div
                 onClick={() => toggleCategory(cat)}
                 className={`w-4 h-4 rounded flex items-center justify-center flex-shrink-0 border transition-colors ${
-                  draft.categories.includes(cat)
+                  filters.categories.includes(cat)
                     ? "bg-primary border-primary"
                     : "border-muted-foreground/40 bg-card group-hover:border-primary/60"
                 }`}
               >
-                {draft.categories.includes(cat) && (
+                {filters.categories.includes(cat) && (
                   <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
                 )}
               </div>
@@ -144,8 +144,8 @@ export default function FilterPanelContent({
       <FilterSection title="Include related roles">
         <div className="flex items-center gap-3">
           {/* <Toggle
-            checked={draft.includeRelatedRoles}
-            onChange={(v) => onChange({ ...draft, includeRelatedRoles: v })}
+            checked={filters.includeRelatedRoles}
+            onChange={(v) => onChange({ ...filters, includeRelatedRoles: v })}
             label="Include related roles"
           /> */}
           <span className="text-xs text-muted-foreground leading-snug">
@@ -160,7 +160,7 @@ export default function FilterPanelContent({
           className="flex flex-wrap gap-1.5 min-h-[36px] bg-muted border border-border rounded-lg px-2.5 py-1.5 cursor-text focus-within:ring-2 focus-within:ring-primary/50 transition-shadow"
           onClick={() => kwRef.current?.focus()}
         >
-          {draft.keywords.map((kw) => (
+          {filters.keywords.map((kw) => (
             <span
               key={kw}
               className="inline-flex items-center gap-1 bg-card border border-border rounded-md px-2 py-0.5 text-xs font-medium text-foreground"
@@ -190,13 +190,13 @@ export default function FilterPanelContent({
               if (
                 e.key === "Backspace" &&
                 !keywordInput &&
-                draft.keywords.length > 0
+                filters.keywords.length > 0
               ) {
-                removeKeyword(draft.keywords[draft.keywords.length - 1]);
+                removeKeyword(filters.keywords[filters.keywords.length - 1]);
               }
             }}
             placeholder={
-              draft.keywords.length === 0 ? "e.g. devops, backend…" : ""
+              filters.keywords.length === 0 ? "e.g. devops, backend…" : ""
             }
             className="flex-1 min-w-[80px] bg-transparent text-xs text-foreground placeholder:text-muted-foreground/60 outline-none"
           />
