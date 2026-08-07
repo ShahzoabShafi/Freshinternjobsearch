@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { ChevronDown, Check, X } from "lucide-react";
 import FilterSection from "./FilterSection.tsx";
+import Toggle from "./Toggle.tsx";
 import { RoleType, Category, Filters } from "../types/filters.ts";
 import { POSTED_OPTS, SEASONS, PROVINCES, CATEGORIES} from "../constants/index.ts";
 
@@ -143,13 +144,13 @@ export default function FilterPanelContent({
       {/* Include related roles */}
       <FilterSection title="Include related roles">
         <div className="flex items-center gap-3">
-          {/* <Toggle
+          <Toggle
             checked={filters.includeRelatedRoles}
             onChange={(v) => onChange({ ...filters, includeRelatedRoles: v })}
             label="Include related roles"
-          /> */}
+          />
           <span className="text-xs text-muted-foreground leading-snug">
-            frontend, backend, DevOps, cloud, SRE&hellip;
+            Frontend, Backend, DevOps, Cloud, SRE etc
           </span>
         </div>
       </FilterSection>

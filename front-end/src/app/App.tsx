@@ -7,6 +7,8 @@ import { DEFAULT_FILTERS } from "./constants/index.ts";
 import { fetchInternships } from "./utils/api.ts";
 import Jobs from "./components/Jobs.tsx";
 import { JobListing } from "./types/job.ts";
+import ErrorBanner from "./components/ErrorBanner.tsx";
+import FilterDrawer from "./components/FilterDrawer.tsx";
 
 function App() {
   const [draftFilters, setDraftFilters] = useState<Filters>(DEFAULT_FILTERS);
@@ -16,7 +18,7 @@ function App() {
   const [error, setError] = useState(false);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [activeView, setActiveView] = useState<View>("browse");
-  const [keywordInput, setKeywordInput] = useState(""); 
+  const [keywordInput, setKeywordInput] = useState("");
   const [jobs, setJobs] = useState<JobListing[]>([]);
   // const [sortBy, setSortBy] = useState<SortBy>("newest");
 
@@ -27,7 +29,7 @@ function App() {
   const handleApply = () => {
     setAppliedFilters(draftFilters);
     setFilterDrawerOpen(false);
-    fetchData(appliedFilters);
+    fetchData(draftFilters);
   };
 
   const handleReset = () => {
@@ -55,7 +57,7 @@ function App() {
   const handleOnChange = (next: Filters) => {
     setDraftFilters(next);
     // console.log("Filters changed:", draftFilters);
-  }
+  };
 
   const calculateFilterHours = (postedWithin: string): number => {
     switch (postedWithin) {
@@ -71,13 +73,13 @@ function App() {
         return 720;
       default:
         return 0; // Default to 0 if no match
-    }    
-  }
+    }
+  };
 
   const fetchData = async (filters: Filters) => {
     try {
       setIsLoading(true);
-      // console.log("Fetching data with filters:", filters);
+      console.log("Fetching data with filters:", filters);
       const payload = {
         hours: calculateFilterHours(filters.postedWithin),
         term: filters.season.toLowerCase() != "all" ? filters.season : null,
@@ -103,6 +105,13 @@ function App() {
     }
   };
 
+  const handleShowMore = () => {
+    const nextFilters: Filters = { ...appliedFilters, postedWithin: "7d" };
+    setDraftFilters(nextFilters);
+    setAppliedFilters(nextFilters);
+    fetchData(nextFilters);
+  };
+
   const filterProps = {
     filters: draftFilters,
     onChange: handleOnChange,
@@ -115,10 +124,11 @@ function App() {
   };
 
   const headerProps = {
-    jobs : jobs,
-    isApiLoading : isLoading,
+    jobs: jobs,
+    isApiLoading: isLoading,
     onRefresh: () => fetchData(appliedFilters),
-  }
+    onOpenFilters: () => setFilterDrawerOpen(true),
+  };
 
   return (
     <>
@@ -126,6 +136,9 @@ function App() {
         className="flex flex-col h-screen overflow-hidden bg-background"
         style={{ fontFamily: "Inter, sans-serif" }}
       >
+        {/* Error Banner */}
+        {error && <ErrorBanner onDismiss={() => setError(false)} />}
+
         {/* Header */}
         <Header {...headerProps}></Header>
 
@@ -139,9 +152,18 @@ function App() {
           )}
 
           <main className="flex-1 overflow-y-auto">
-            <Jobs jobs={jobs}/>
+            <Jobs jobs={jobs} onShowMore={handleShowMore} />
           </main>
         </div>
+
+        {/* Mobile Filter Drawer */}
+        {activeView === "browse" && (
+          <FilterDrawer
+            open={filterDrawerOpen}
+            onClose={() => setFilterDrawerOpen(false)}
+            {...filterProps}
+          />
+        )}
       </div>
     </>
   );

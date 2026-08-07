@@ -16,15 +16,16 @@ export default function Header({
   jobs,
   isApiLoading,
   onRefresh,
+  onOpenFilters,
 }:{
   jobs: JobListing[];
   isApiLoading: boolean;
   onRefresh: () => void;
+  onOpenFilters: () => void;
 }) {
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(false);
   const [showError, setShowError] = useState(false);
-  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [activeView, setActiveView] = useState<View>("browse");
   const [sortBy, setSortBy] = useState<SortBy>("newest");
   const [appliedFilters, setAppliedFilters] =
@@ -184,7 +185,7 @@ export default function Header({
           {/* Mobile: Filters button */}
           {activeView === "browse" && (
             <button
-              onClick={() => setFilterDrawerOpen(true)}
+              onClick={onOpenFilters}
               className="lg:hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold"
             >
               <FilterIcon className="w-3.5 h-3.5" />
