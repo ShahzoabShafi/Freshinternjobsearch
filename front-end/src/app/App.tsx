@@ -5,20 +5,20 @@ import { useState, useEffect } from "react";
 import { View, Filters } from "./types/filters.ts";
 import { DEFAULT_FILTERS } from "./constants/index.ts";
 import { fetchInternships } from "./utils/api.ts";
+import Jobs from "./components/Jobs.tsx";
+import { JobListing } from "./types/job.ts";
 
 function App() {
   const [draftFilters, setDraftFilters] = useState<Filters>(DEFAULT_FILTERS);
   const [appliedFilters, setAppliedFilters] =
     useState<Filters>(DEFAULT_FILTERS);
-  // const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
-  // const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
-  // const [sortBy, setSortBy] = useState<SortBy>("newest");
   const [activeView, setActiveView] = useState<View>("browse");
   const [keywordInput, setKeywordInput] = useState("");
-  const [jobs, setJobs] = useState([]);
+  const [jobs, setJobs] = useState<JobListing[]>([]);
+  // const [sortBy, setSortBy] = useState<SortBy>("newest");
 
   useEffect(() => {
     fetchData(draftFilters);
@@ -115,7 +115,9 @@ function App() {
             </aside>
           )}
 
-          <main className="flex-1 overflow-y-auto"></main>
+          <main className="flex-1 overflow-y-auto">
+            <Jobs jobs={jobs}/>
+          </main>
         </div>
       </div>
     </>

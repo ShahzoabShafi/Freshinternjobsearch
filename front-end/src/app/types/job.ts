@@ -1,21 +1,17 @@
-import { Category, Season, RoleType } from './filters';
-
-export interface Job {
+export interface JobListing {
+  active: boolean;
+  category: string;
+  company_name: string;
+  date_posted: number;
+  date_updated: number;
+  degrees: string[];
   id: string;
-  title: string;
-  company: string;
-  initials: string;
-  color: string;
-  location: string;
-  province: string;
-  category: Category;
-  postedAt: Date;
-  deadline?: Date;
-  season: Season;
-  roleType: RoleType;
-  isRelated: boolean;
-  applyUrl: string;
-  description: string;
+  is_visible: boolean;
+  locations: string[];
+  source: string;
   sponsorship: string;
+  terms: string[];
+  title: string;
+  url: string;
 }
 
