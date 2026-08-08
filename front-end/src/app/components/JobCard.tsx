@@ -63,14 +63,14 @@ export default function JobCard({ job }: { job: JobListing }) {
             {job.category}
           </span>
           {/* Term Tag */}
-          {job.terms.map((term) => (
+          {job.terms && (job.terms.map((term) => (
             <span
               key={term}
               className="px-3 py-1 text-xs font-medium text-orange-600 bg-orange-50/80 rounded-full"
             >
               {term}
             </span>
-          ))}
+          )))}
           {/* Time Tag */}
           <span className="flex items-center gap-1 px-3 py-1 text-xs font-medium text-emerald-700 bg-emerald-50 rounded-full">
             <Clock className="w-3 h-3 text-emerald-600" />
