@@ -7,7 +7,7 @@ from core import get_jobs
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://freshinternjobsearch.onrender.com","http://localhost:5173",],   # Vite's dev server
+    allow_origins=["https://freshinternjobsearch-shahzoabshafis-projects.vercel.app/","https://freshinternjobsearch-shahzoabshafis-projects.vercel.app/","http://localhost:5173",],   # Vite's dev server
     allow_methods=["GET"],
     allow_headers=["*"],
 ) # this unblocks the calls from the frontend to the backend
