@@ -25,7 +25,7 @@ export default function JobCard({ job }: { job: JobListing }) {
       <div>
         <div className="flex justify-between items-start pr-6">
           <h3 className="text-lg font-bold text-slate-900 leading-snug">
-            {job.title}
+            {job.title || "NA"}
           </h3>
           {false && (
             <button
@@ -38,24 +38,34 @@ export default function JobCard({ job }: { job: JobListing }) {
         </div>
 
         <p className="text-base text-slate-500 font-medium mt-1 hover:text-[#2b8da8]">
-          <a href={job.company_url} target="_blank" rel="noopener noreferrer" >{job.company_name}</a>
+          <a
+            href={job.company_url || "NA"}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {job.company_name || "NA"}
+          </a>
         </p>
 
         {/* Location */}
         <div className="flex flex-col content-center items-start">
-          {job.locations.map((location) => (
-            <div className="flex items-center gap-1 text-slate-500 text-sm mt-3">
-              <>
-                <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
-                <span>{location}</span>
-              </>
-            </div>
-          ))}
+          {job.locations &&
+            job.locations.map((location) => (
+              <div className="flex items-center gap-1 text-slate-500 text-sm mt-3">
+                <>
+                  <MapPin className="w-4 h-4 text-slate-400 shrink-0" />
+                  <span>{location || "NA"}</span>
+                </>
+              </div>
+            ))}
         </div>
       </div>
 
       {/* Footer Section */}
-      <div className="flex items-end justify-between" style={{ marginTop: "1.25rem" }}>
+      <div
+        className="flex items-end justify-between"
+        style={{ marginTop: "1.25rem" }}
+      >
         {/* Badges */}
         <div className="flex flex-wrap items-center gap-2">
           {/* Category Tag */}
@@ -63,24 +73,25 @@ export default function JobCard({ job }: { job: JobListing }) {
             {job.category}
           </span>
           {/* Term Tag */}
-          {job.terms && (job.terms.map((term) => (
-            <span
-              key={term}
-              className="px-3 py-1 text-xs font-medium text-orange-600 bg-orange-50/80 rounded-full"
-            >
-              {term}
-            </span>
-          )))}
+          {job.terms &&
+            job.terms.map((term) => (
+              <span
+                key={term || "NA"}
+                className="px-3 py-1 text-xs font-medium text-orange-600 bg-orange-50/80 rounded-full"
+              >
+                {term || "NA"}
+              </span>
+            ))}
           {/* Time Tag */}
           <span className="flex items-center gap-1 px-3 py-1 text-xs font-medium text-emerald-700 bg-emerald-50 rounded-full">
             <Clock className="w-3 h-3 text-emerald-600" />
-            {formatRelativeTime(job.date_posted)}
+            {formatRelativeTime(job.date_posted || 0)}
           </span>
         </div>
 
         {/* Apply Button */}
         <a
-          href={job.url}
+          href={job.url || "NA"}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-[#2b8da8] hover:bg-[#23758c] rounded-xl transition-colors shrink-0"
