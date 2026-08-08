@@ -1,7 +1,9 @@
+from argparse import Namespace
+from typing import Literal
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Literal
-from argparse import Namespace
+
 from core import get_jobs
 
 app = FastAPI()

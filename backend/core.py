@@ -1,4 +1,9 @@
-import time, sys, urllib.request, json, urllib.error, csv
+import csv
+import json
+import sys
+import time
+import urllib.error
+import urllib.request
 from datetime import datetime, timezone
 
 # Raw listings path within any SimplifyJobs repo
@@ -10,6 +15,10 @@ INTERN_REPO_TMPL = "Summer{year}-Internships"
 # Fallback if auto-detection can't reach GitHub (kept current-ish; auto-detect
 # normally overrides this anyway).
 FALLBACK_INTERN_REPO = "Summer2026-Internships"
+
+
+class FeedDownloadError(Exception):
+    """Raised when the listings feed can't be downloaded or parsed."""
 
 # Category labels as they appear in the feed
 SOFTWARE_CATEGORIES = {"Software", "Software Engineering"}
@@ -50,8 +59,8 @@ def get_jobs(search_parameters):
     url = get_source_url(search_parameters)
     try:
         listings = get_listings(url)
-    except Exception as e:
-        raise Exception(f"could not download the feed: {e}")
+    except (OSError, urllib.error.URLError, json.JSONDecodeError) as e:
+        raise FeedDownloadError(f"could not download the feed: {e}") from e
 
     jobs = find_jobs(listings,search_parameters)
     return jobs
@@ -233,7 +242,7 @@ def _listings_exists(repo, timeout=15):
         if e.code == 404:
             return False
         return None  # other HTTP error -> uncertain
-    except Exception:
+    except (OSError, urllib.error.URLError):
         return None  # network/uncertain -> caller decides
 
 
@@ -273,8 +282,8 @@ def export_xlsx(jobs, path, now):
     """
     try:
         from openpyxl import Workbook
-        from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
         from openpyxl.comments import Comment
+        from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
         from openpyxl.utils import get_column_letter
     except ImportError:
         print("openpyxl is required for Excel export. Install it with:\n"

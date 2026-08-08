@@ -12,12 +12,14 @@ jobs:
       run:
         working-directory: backend
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
       - run: pip install pytest
+      - run: pip install ruff
+      - run: ruff check .
       - run: pytest
 
   frontend:
@@ -26,9 +28,10 @@ jobs:
       run:
         working-directory: front-end
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: "20"
       - run: npm ci
+      - run: npm run lint
       - run: npm run build

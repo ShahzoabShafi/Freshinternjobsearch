@@ -1,4 +1,5 @@
 from types import SimpleNamespace
+
 from core import find_jobs
 
 NOW = 1_000_000_000  # fixed reference time so recency is deterministic
@@ -15,9 +16,9 @@ def make_job(**overrides):
     return job
 
 def make_args(**overrides):
-    base = dict(hours=24.0, term=None, source="internships", province=None,
-                include_ai=False, all_tech=False, rescue_adjacent=False,
-                roles=None, year=None, source_url=None)
+    base = {"hours": 24.0, "term": None, "source": "internships", "province": None,
+             "include_ai": False, "all_tech": False, "rescue_adjacent": False,
+             "roles": None, "year": None, "source_url": None}
     base.update(overrides)
     return SimpleNamespace(**base)
 
