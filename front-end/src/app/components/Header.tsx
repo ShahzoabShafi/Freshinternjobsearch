@@ -192,6 +192,19 @@ export default function Header({
               Filters
             </button>
           )}
+          {/* Mobile: saved tab
+          <button
+            onClick={() =>
+              setActiveView(activeView === "saved" ? "browse" : "saved")
+            }
+            className={`sm:hidden w-8 h-8 rounded-lg flex items-center justify-center transition-colors border ${
+              activeView === "saved"
+                ? "bg-primary border-primary text-primary-foreground"
+                : "border-border bg-card text-muted-foreground"
+            }`}
+          >
+            <Bookmark className="w-3.5 h-3.5" />
+          </button> */}
         </div>
       </header>
     </>
