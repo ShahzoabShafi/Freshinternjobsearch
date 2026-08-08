@@ -56,8 +56,8 @@ def get_jobs(search_parameters):
     jobs = find_jobs(listings,search_parameters)
     return jobs
 
-def find_jobs(listings, search_parameters):
-    now = time.time()
+def find_jobs(listings, search_parameters, now=None):
+    now = now or time.time()
     categories = select_categories(search_parameters)
     roles = None
 
