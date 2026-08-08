@@ -74,7 +74,7 @@ export default function FilterPanelContent({
       </FilterSection>
 
       {/* Role type */}
-      <FilterSection title="Role type">
+      {/* <FilterSection title="Role type"> */}
         <div className="flex rounded-lg overflow-hidden border border-border bg-muted p-0.5 gap-0.5">
           {(["internships", "newgrad"] as RoleType[]).map((rt) => (
             <button
