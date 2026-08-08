@@ -42,7 +42,7 @@ export default function FilterPanelContent({
             <button
               key={opt.value}
               onClick={() => onChange({ ...filters, postedWithin: opt.value })}
-              className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
+              className={`cursor-pointer px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
                 filters.postedWithin === opt.value
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -61,7 +61,7 @@ export default function FilterPanelContent({
             <button
               key={s}
               onClick={() => onChange({ ...filters, season: s })}
-              className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
+              className={`px-2.5 py-1 cursor-pointer rounded-lg text-xs font-medium transition-colors ${
                 filters.season === s
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -80,7 +80,7 @@ export default function FilterPanelContent({
             <button
               key={rt}
               onClick={() => onChange({ ...filters, roleType: rt })}
-              className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors ${
+              className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors cursor-pointer ${
                 filters.roleType === rt
                   ? "bg-card text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
@@ -211,13 +211,13 @@ export default function FilterPanelContent({
       <div className="flex flex-col items-center justify-between gap-3">
         <button
           onClick={onApply}
-          className="flex-1 w-full py-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
+          className="cursor-pointer flex-1 w-full py-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
         >
           Apply filters
         </button>
         <button
           onClick={onReset}
-          className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          className="cursor-pointer text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           Reset
         </button>

@@ -13,7 +13,7 @@ FALLBACK_INTERN_REPO = "Summer2026-Internships"
 
 # Category labels as they appear in the feed
 SOFTWARE_CATEGORIES = {"Software", "Software Engineering"}
-AI_CATEGORIES = {"AI/ML/Data", "Data Science, AI & Machine Learning"}
+AI_CATEGORIES = {"AI/ML/Data", "Data Science", "AI & Machine Learning"}
 
 # Canadian province / territory codes (used as a secondary location signal)
 CA_PROVINCES = {

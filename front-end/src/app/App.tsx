@@ -2,6 +2,7 @@ import React from "react";
 import Header from "./components/Header.js";
 import FilterPanelContent from "./components/FilterPanelContent.js";
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { View, Filters } from "./types/filters.ts";
 import { DEFAULT_FILTERS } from "./constants/index.ts";
 import { fetchInternships } from "./utils/api.ts";
@@ -100,6 +101,9 @@ function App() {
     } catch (err: any) {
       const errorMessage = err.response?.data?.detail || err.message;
       setError(errorMessage);
+      toast.error("Failed to load internships", {
+        description: errorMessage || "Please check your connection and try again.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -152,7 +156,7 @@ function App() {
           )}
 
           <main className="flex-1 overflow-y-auto">
-            <Jobs jobs={jobs} onShowMore={handleShowMore} />
+            <Jobs jobs={jobs} onShowMore={handleShowMore} isLoading={isLoading} />
           </main>
         </div>
 

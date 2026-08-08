@@ -1,4 +1,5 @@
 import React from "react";
+import { Loader2 } from "lucide-react";
 import JobCard from "./JobCard";
 import { JobListing } from "../types/job";
 
@@ -72,17 +73,28 @@ function EmptyState({ onShowMore }: { onShowMore: () => void }) {
 export default function Jobs({
   jobs,
   onShowMore,
+  isLoading,
 }: {
   jobs: JobListing[];
   onShowMore: () => void;
+  isLoading?: boolean;
 }) {
   return (
-    <div className="min-h-screen bg-slate-50 p-8">
+    <div className="relative min-h-screen bg-slate-50 p-8">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
         {jobs.length > 0
           ? jobs.map((job) => <JobCard key={job.id} job={job} />)
-          : <EmptyState onShowMore={onShowMore} />}
+          : !isLoading && <EmptyState onShowMore={onShowMore} />}
       </div>
+
+      {isLoading && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-slate-50/80 backdrop-blur-sm">
+          <Loader2 className="w-8 h-8 text-primary animate-spin" />
+          <p className="text-sm font-medium text-muted-foreground">
+            Loading roles…
+          </p>
+        </div>
+      )}
     </div>
   );
 }

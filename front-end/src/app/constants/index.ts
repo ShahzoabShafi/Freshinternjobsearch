@@ -24,7 +24,7 @@ const POSTED_OPTS: { label: string; value: PostedWithin }[] = [
 
 const SEASONS: Season[] = ["All", "Fall", "Winter", "Spring", "Summer"];
 const PROVINCES = ["All","ON","QC","BC","AB","MB","SK","NS","NB","NL","PE","NT","YT","NU"];
-const CATEGORIES: Category[] = [ "All tech","AI/ML/Data"];
+const CATEGORIES: Category[] = [ "All tech","AI/ML/Data", "Software", "Data Science"];
 
 const DEFAULT_FILTERS: Filters = {
   postedWithin: "24h",
