@@ -192,7 +192,7 @@ export default function Header({
               Filters
             </button>
           )}
-          {/* Mobile: saved tab */}
+          {/* Mobile: saved tab
           <button
             onClick={() =>
               setActiveView(activeView === "saved" ? "browse" : "saved")
@@ -204,7 +204,7 @@ export default function Header({
             }`}
           >
             <Bookmark className="w-3.5 h-3.5" />
-          </button>
+          </button> */}
         </div>
       </header>
     </>
