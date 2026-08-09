@@ -32,7 +32,7 @@ const DEFAULT_FILTERS: Filters = {
   roleType: "internships",
   province: "All",
   categories: [],
-  includeRelatedRoles: false,
+  includeRelatedRoles: true,
   keywords: [],
 };
 
